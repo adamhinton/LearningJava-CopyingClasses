@@ -4,6 +4,13 @@ import java.util.Arrays;
 
 record Person(String name, String dob, Person[] kids){
 
+    // Custom constructor
+    // So we don't have to make a custom one every time we make copies or whatever
+
+    public Person(Person p){
+        this(p.name, p.dob, p.kids == null ? null : Arrays.copyOf(p.kids, p.kids().length));
+    }
+
     @Override
     public String toString() {
         return "Person{" +
@@ -29,13 +36,12 @@ public class Main {
 //        Person[] personsCopy = Arrays.copyOf(persons, persons.length);
         Person[] personsCopy = new Person[5];
 
-        for (int i=0; i<5; i++){
-            Person current = persons[i];
+        // There's an even better way than this. Arrays.setAll
+//        for (int i=0; i<5; i++){
+//            personsCopy[i] = new Person(persons[i]);
+//        }
 
-            var kids = current.kids() == null ? null : Arrays.copyOf(current.kids(), current.kids().length);
-
-            personsCopy[i] = new Person(current.name(), current.dob(), kids);
-        }
+        Arrays.setAll(personsCopy, i-> new Person(persons[i]));
 
         var jillsKids = personsCopy[4].kids();
         jillsKids[1] = jane;
